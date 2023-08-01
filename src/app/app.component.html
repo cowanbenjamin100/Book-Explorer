@@ -1,0 +1,104 @@
+
+<div class="image-container">
+  <img src="assets/logo.jpg" >
+</div>
+
+
+<div style="display: flex;padding: 50px;">
+  <div class=" ">
+    <!-- Dropdown button -->
+    <div ngbDropdown #myDropdown="ngbDropdown">
+      <button class="btn btn-primary" id="dropdownBasic" ngbDropdownToggle style="width: 151.5px;"[id]="'ddtoggle'">
+        {{selectedDropDownValue ? selectedDropDownValue:dropDownOptions[0]}}
+      </button>
+      <!-- Dropdown menu -->
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic">
+        <button [id]="(i+option).toString()" ngbDropdownItem *ngFor="let option of dropDownOptions;let i=index" (click)="selectDropDownValue(option)">{{option}}</button>
+
+      </div>
+    </div>
+  </div>
+
+  <input class="form-control" [(ngModel)]="searchText" placeholder="search...">
+</div>
+<ngb-pagination
+style="float:right; padding-right: 50px;margin-top: 20px;"
+[(page)]="page"
+[pageSize]="pageSize"
+[collectionSize]="books.length"
+[maxSize]="5" [boundaryLinks]="true"
+></ngb-pagination>
+
+<div style="padding: 50px;">
+  <table class="table table-striped" style="text-align: center; border: 1px solid slategray; font-size: 14px;vertical-align: middle!important;">
+    <thead>
+      <th>Cover Image</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th style="text-align: left;">Description</th>
+      <th>Rating</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let book of books.slice((page - 1) * pageSize, page * pageSize) | filter: searchText: selectedDropDownValue" (click)="openXl(content,book.id)" class="tableRow">
+        <td><img src="{{book.coverImage}}" alt=""></td>
+        <td>{{book.title}}</td>
+        <td>{{book.author}}</td>
+        <td style="text-align: left;">
+          <span [innerHTML]="parseDescription(book.description)"></span></td>
+        <td>{{book.rating}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ngb-pagination
+style="float:right; padding-right: 50px;"
+[(page)]="page"
+[pageSize]="pageSize"
+[collectionSize]="books.length"
+[maxSize]="5" [boundaryLinks]="true"
+></ngb-pagination>
+
+
+<ng-template #content let-modal>
+	<div class="modal-header">
+   <h1>Title: {{selectedVolumeInfo.title}}</h1> 
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+    Authors:
+    <ul>
+      <li *ngFor="let author of selectedVolumeInfo.authors">{{author}}</li>
+    </ul>
+    Authors:{{selectedVolumeInfo.authors[0]}} <br>
+    Canonical Volume link: {{selectedVolumeInfo.canonicalVolumeLink}}
+    Categories:
+    <ul>
+      <li *ngFor="let category of selectedVolumeInfo.categories">{{category}}</li>
+    </ul>
+    Industry Identifiers:
+    <table class="table">
+      <thead>
+        <tr *ngFor="let identifier of selectedVolumeInfo.industryIdentifiers">
+          <td>{{identifier.type}}</td>
+          <td>{{identifier.identifier}}</td>
+        </tr>
+      </thead>
+    </table>
+
+    Language: {{selectedVolumeInfo.language}} <br>
+    Print Type: {{selectedVolumeInfo.printType}}<br>
+    Printed Page Count: {{selectedVolumeInfo.printedPageCount}}<br>
+    Published Date: {{selectedVolumeInfo.publishedDate}}<br>
+    Publisher: {{selectedVolumeInfo.publisher}} <br><br>
+    
+    <a href="{{selectedVolumeInfo.canonicalVolumeLink}}" target="_blank">
+      <button class="btn btn-success">Buy</button>
+    </a>
+
+    
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+	</div>
+</ng-template>
